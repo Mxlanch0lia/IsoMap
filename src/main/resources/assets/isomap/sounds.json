@@ -1,0 +1,11 @@
+{
+  "ui.open": { "sounds": ["isomap:ui/open"] },
+  "ui.close": { "sounds": ["isomap:ui/close"] },
+  "ui.hover": { "sounds": ["isomap:ui/hover"] },
+  "ui.click": { "sounds": ["isomap:ui/click"] },
+  "ui.toggle_on": { "sounds": ["isomap:ui/toggle_on"] },
+  "ui.toggle_off": { "sounds": ["isomap:ui/toggle_off"] },
+  "ui.waypoint_add": { "sounds": ["isomap:ui/waypoint_add"] },
+  "ui.waypoint_remove": { "sounds": ["isomap:ui/waypoint_remove"] },
+  "ui.ping": { "sounds": ["isomap:ui/ping"] }
+}

@@ -1,0 +1,47 @@
+name: Bug report / Ошибка
+description: Something does not work as it should. / Что-то работает не так.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! The more of the fields below you fill in, the faster it can be fixed.
+        Спасибо! Чем больше полей заполнено, тем быстрее получится исправить.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened? / Что произошло?
+      description: What you did, what you expected and what you saw instead. / Что делали, что ожидали и что получилось.
+    validations:
+      required: true
+  - type: input
+    id: isomap
+    attributes:
+      label: IsoMap version / Версия IsoMap
+      placeholder: "1.3.0"
+    validations:
+      required: true
+  - type: input
+    id: neoforge
+    attributes:
+      label: NeoForge version / Версия NeoForge
+      placeholder: "21.1.x"
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where? / Где?
+      options:
+        - Singleplayer / Одиночная игра
+        - LAN world / Мир по сети
+        - Server with IsoMap / Сервер с IsoMap
+        - Server without IsoMap / Сервер без IsoMap
+  - type: textarea
+    id: mods
+    attributes:
+      label: Other mods / Другие моды
+      description: Especially rendering mods such as Sodium, Iris, Embeddium, Oculus. / Особенно моды рендера.
+  - type: textarea
+    id: log
+    attributes:
+      label: Crash report or log / Краш-репорт или лог
+      description: "`crash-reports/...` or `logs/latest.log`. Drag the file here. / Перетащите файл сюда."
