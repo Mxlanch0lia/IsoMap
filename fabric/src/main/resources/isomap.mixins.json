@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.isomap.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "EditBoxMixin",
+    "GameRendererMixin",
+    "GuiGraphicsMixin",
+    "MouseHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -19,5 +19,8 @@ jobs:
       - run: ./gradlew build --no-daemon
       - uses: actions/upload-artifact@v4
         with:
-          name: isomap-jar
-          path: build/libs/*.jar
+          name: isomap-jars
+          # One jar per loader; the common project builds no release jar.
+          path: |
+            neoforge/build/libs/*.jar
+            fabric/build/libs/*.jar

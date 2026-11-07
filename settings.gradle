@@ -1,9 +1,24 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+    }
+    plugins {
+        id 'net.neoforged.moddev' version '2.0.148'
+        // The variant of Loom for Minecraft versions that still ship obfuscated, 1.21.1 among them.
+        // 1.15 is the newest that runs on the project's Gradle 9.2; later ones need Gradle 9.4 and up.
+        id 'net.fabricmc.fabric-loom-remap' version '1.15.5'
     }
 }
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
+
+rootProject.name = 'isomap'
+
+// common: the map itself, against plain Minecraft. neoforge and fabric: thin glue that compiles common in with it.
+include 'common', 'neoforge', 'fabric'

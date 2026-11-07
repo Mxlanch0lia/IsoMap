@@ -1,0 +1,88 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap'
+}
+
+base {
+    archivesName = "${mod_id}-fabric-${minecraft_version}"
+}
+
+def common = project(':common')
+
+// The shared code is compiled into this jar together with the Fabric glue.
+// smoke: the QA harness that plays the mod inside a real client. It is never packaged into the release jar.
+sourceSets {
+    main {
+        java.srcDir common.file('src/main/java')
+        resources.srcDir common.file('src/main/resources')
+    }
+    smoke {
+        java.srcDir common.file('src/smoke/java')
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
+repositories {
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/releases/'
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    // Mojang's names with Parchment's parameter names: the same source compiles for both loaders.
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_mappings_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    // @Nullable and friends, which NeoForge's environment brings along. Annotations only, not needed at run time.
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    smokeCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    // Only for the settings button in Mod Menu's list; the mod works without Mod Menu.
+    modCompileOnly "com.terraformersmc:modmenu:${modmenu_version}"
+}
+
+loom {
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+        isomap_smoke {
+            sourceSet sourceSets.smoke
+        }
+    }
+
+    runs {
+        client {
+            runDir '../run-fabric'
+        }
+        server {
+            runDir '../run-fabric-server'
+        }
+        // Launches a real client, walks through the mod's features and exits. Report: run-smoke-fabric/isomap-smoke/report.txt
+        smokeTest {
+            client()
+            name 'Smoke test'
+            source sourceSets.smoke
+            runDir '../' + (System.getenv('ISOMAP_SMOKE_DIR') ?: 'run-smoke-fabric')
+            vmArg '-Disomap.smoke=true'
+            programArgs '--username', System.getenv('ISOMAP_SMOKE_USER') ?: 'Dev', '--width', System.getenv('ISOMAP_SMOKE_WIDTH') ?: '1280', '--height', System.getenv('ISOMAP_SMOKE_HEIGHT') ?: '720'
+        }
+    }
+}
+
+processResources {
+    def props = [
+            version            : mod_version,
+            mod_description    : mod_description,
+            minecraft_version  : minecraft_version,
+            fabric_loader_min  : fabric_loader_min,
+    ]
+    inputs.properties props
+    filesMatching('fabric.mod.json') {
+        expand props
+    }
+}

@@ -53,3 +53,9 @@ run-compat-shaders
 publish/*.jar
 run-ded-*
 *.log
+run-fabric
+run-fabric-server
+run-smoke-fabric
+run-gallery
+run-gallery-hero
+run-smoke-fabric-guest

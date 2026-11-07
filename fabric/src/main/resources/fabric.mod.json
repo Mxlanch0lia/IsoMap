@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "isomap",
+  "version": "${version}",
+  "name": "IsoMap",
+  "description": "${mod_description}",
+  "authors": ["Mxlanch0lia"],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/isomap-minimap",
+    "sources": "https://github.com/Mxlanch0lia/IsoMap",
+    "issues": "https://github.com/Mxlanch0lia/IsoMap/issues",
+    "email": "mxlanch0lia@gmail.com"
+  },
+  "license": "MIT",
+  "icon": "isomap_logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.isomap.fabric.IsoMapFabric"],
+    "client": ["dev.isomap.fabric.IsoMapFabricClient"],
+    "modmenu": ["dev.isomap.fabric.ModMenuIntegration"]
+  },
+  "mixins": [
+    {
+      "config": "isomap.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader_min}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=21"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

@@ -3,7 +3,7 @@
 <h1 align="center">IsoMap</h1>
 
 <p align="center">
-A minimalist 2.5D isometric minimap for <b>Minecraft 1.21.1 / NeoForge</b>.<br>
+A minimalist 2.5D isometric minimap for <b>Minecraft 1.21.1</b>, on <b>NeoForge</b> and <b>Fabric</b>.<br>
 <a href="https://modrinth.com/mod/isomap-minimap"><img src="https://img.shields.io/modrinth/dt/isomap-minimap?logo=modrinth&label=Modrinth" alt="Modrinth downloads"></a>
 <a href="https://www.curseforge.com/minecraft/mc-mods/isomap"><img src="https://img.shields.io/curseforge/dt/1779166?logo=curseforge&label=CurseForge" alt="CurseForge downloads"></a>
 <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license">
@@ -13,7 +13,7 @@ A minimalist 2.5D isometric minimap for <b>Minecraft 1.21.1 / NeoForge</b>.<br>
 
 Your world as a small isometric model in the corner of the screen: real relief, a free camera, and waypoints that keep their height. Install it on the client and it works on any server; the server only needs the mod for pings to travel between players without chat.
 
-![Minimap](publish/gallery/1_minimap.png)
+![IsoMap: the full map as a small 3D model](publish/gallery/0_map_3d.png)
 
 ## Features
 
@@ -32,9 +32,11 @@ Your world as a small isometric model in the corner of the screen: real relief, 
 
 ## Installation
 
-1. Install NeoForge 21.1.x for Minecraft 1.21.1.
-2. Download IsoMap from [Modrinth](https://modrinth.com/mod/isomap-minimap), [CurseForge](https://www.curseforge.com/minecraft/mc-mods/isomap) or [Releases](../../releases) and put the jar into `mods`.
-3. Optional: put the same jar on a NeoForge server so pings travel invisibly. Players without the mod can still join.
+1. Install NeoForge 21.1.x, or Fabric Loader with [Fabric API](https://modrinth.com/mod/fabric-api), for Minecraft 1.21.1.
+2. Download the IsoMap jar for your loader from [Modrinth](https://modrinth.com/mod/isomap-minimap), [CurseForge](https://www.curseforge.com/minecraft/mc-mods/isomap) or [Releases](../../releases) and put it into `mods`.
+3. Optional: put the same jar on the server so pings travel invisibly. Players without the mod can still join.
+
+On Fabric the settings are also reachable from [Mod Menu](https://modrinth.com/mod/modmenu), if you have it.
 
 ## Default keys
 
@@ -60,7 +62,9 @@ JDK 21 is needed; Gradle comes with the wrapper.
 ./gradlew build
 ```
 
-The jar appears in `build/libs/`. `./gradlew runClient` starts the game with the mod, and `./gradlew runSmokeTest` plays through the mod in a real client and writes a report to `run-smoke/isomap-smoke/report.txt`. The technical notes (rendering, assumptions, what is and is not tested) are in the [Russian README](README.ru.md).
+The project has three parts: `common` holds the map itself and is compiled against plain Minecraft, so it cannot use either loader by accident; `neoforge` and `fabric` add the thin glue for each loader and compile `common` into their jars. The jars appear in `neoforge/build/libs/` and `fabric/build/libs/`.
+
+`./gradlew :neoforge:runClient` or `:fabric:runClient` starts the game with the mod. `./gradlew :neoforge:runSmokeTest` and `:fabric:runSmokeTest` play through the mod in a real client and write a report to `run-smoke/` and `run-smoke-fabric/`. The technical notes (rendering, assumptions, what is and is not tested) are in the [Russian README](README.ru.md).
 
 ## Bug reports and contact
 

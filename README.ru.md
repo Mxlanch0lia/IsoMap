@@ -2,15 +2,17 @@
 
 [English README](README.md)
 
-Минималистичная 2.5D-миникарта для **Minecraft 1.21.1 / NeoForge**: изометрический рельеф, свободная камера по двум осям, метки с тегами, метки смерти, временные пинги для других игроков и настройки прямо в игре.
+Минималистичная 2.5D-миникарта для **Minecraft 1.21.1** на **NeoForge** и **Fabric**: изометрический рельеф, свободная камера по двум осям, метки с тегами, метки смерти, временные пинги для других игроков и настройки прямо в игре.
 
 Мод ставится на клиент. На сервер он нужен только для того, чтобы пинги ходили между игроками незаметно: его сетевой канал необязателен, поэтому клиент с модом подключается и к серверам без него, а игроки без мода могут заходить на сервер с ним. Синхронизируемых реестров мод не трогает.
 
 ## Установка
 
-1. Установите NeoForge 21.1.x для Minecraft 1.21.1.
-2. Положите `build/libs/isomap-neoforge-1.21.1-1.3.0.jar` в папку `mods`.
-3. Необязательно: положите тот же jar на сервер NeoForge, чтобы пинги передавались без чата.
+1. Установите для Minecraft 1.21.1 NeoForge 21.1.x или Fabric Loader вместе с Fabric API.
+2. Положите jar для своего загрузчика в папку `mods`: `neoforge/build/libs/isomap-neoforge-1.21.1-<версия>.jar` или `fabric/build/libs/isomap-fabric-1.21.1-<версия>.jar`.
+3. Необязательно: положите тот же jar на сервер, чтобы пинги передавались без чата.
+
+На Fabric настройки открываются ещё и из списка Mod Menu, если он установлен.
 
 ## Связь и баг-репорты
 
@@ -28,14 +30,19 @@
 ./gradlew build
 ```
 
-В Windows вместо `./gradlew` используйте `gradlew.bat`. Готовый jar появится в `build/libs/`.
+В Windows вместо `./gradlew` используйте `gradlew.bat`. Проект состоит из трёх частей:
+
+- **`common`** — сама карта. Собирается против чистого Minecraft, без загрузчика, поэтому случайно использовать что-то из NeoForge или Fabric в ней нельзя: сборка упадёт.
+- **`neoforge`** и **`fabric`** — тонкие обёртки: точки входа, события загрузчика, регистрация клавиш и сетевого канала. Каждая вкомпилирует `common` в свой jar.
+
+Готовые jar лежат в `neoforge/build/libs/` и `fabric/build/libs/`.
 
 | Команда | Что делает |
 | --- | --- |
-| `gradlew runClient` | Запускает игру с модом для разработки |
-| `gradlew runSmokeTest` | Прогоняет автоматическую приёмку в настоящем клиенте и закрывает его |
+| `gradlew :neoforge:runClient`, `gradlew :fabric:runClient` | Запускает игру с модом для разработки |
+| `gradlew :neoforge:runSmokeTest`, `gradlew :fabric:runSmokeTest` | Прогоняет автоматическую приёмку в настоящем клиенте и закрывает его |
 
-Отчёт приёмки лежит в `run-smoke/isomap-smoke/report.txt`, снимки экрана — в `run-smoke/screenshots/`. Код харнесса находится в отдельном source set (`src/smoke`) и в релизный jar не попадает.
+Отчёт приёмки лежит в `run-smoke/isomap-smoke/report.txt` (Fabric: `run-smoke-fabric/`), снимки экрана — в `screenshots/` рядом. Харнесс общий для обоих загрузчиков (`common/src/smoke`), каждый загрузчик добавляет лишь пару классов, которые его запускают. В релизный jar он не попадает.
 
 ## Управление
 
@@ -106,33 +113,33 @@
 
 Поворот, наклон и зум меняют только матрицу, поэтому при движении камеры ничего не перестраивается. Плитки, которые долго не нужны, освобождаются, при выходе из мира освобождается всё.
 
-Миксинов в моде нет. Поворот камеры использует `CalculatePlayerTurnEvent`, зум колесом — `MouseScrollingEvent`, рендер — `RenderFrameEvent` и слой GUI.
+На NeoForge миксинов нет: поворот камеры использует `CalculatePlayerTurnEvent`, зум колесом — `MouseScrollingEvent`, рендер — `RenderFrameEvent` и слой GUI. У Fabric API таких событий нет, поэтому версия для Fabric делает то же самое небольшими миксинами: начало кадра (`GameRenderer.render`), поворот мышью и колесо (`MouseHandler`), а также поля ввода без тени текста (`EditBox`, `GuiGraphics`). Общий код в обоих случаях один и тот же (`ClientEvents`).
 
 ## Структура проекта
 
 ```
 build.gradle, settings.gradle, gradle.properties, gradlew*, gradle/wrapper/
-src/main/templates/META-INF/neoforge.mods.toml
-src/main/resources/assets/isomap/
+common/src/main/resources/assets/isomap/
     lang/{ru_ru,en_us}.json
     sounds.json, sounds/ui/*.ogg
-src/main/java/dev/isomap/
-    IsoMap.java                 общая точка входа, регистрирует сеть пингов
+common/src/main/java/dev/isomap/
+    IsoMap.java                 общие константы
+    platform/Platform.java      то немногое, что нужно от загрузчика: папки и сетевой канал
     ping/                       пакет пинга и его ретрансляция сервером
     config/                     настройки, их типы и перечисления
-    client/IsoMapClient.java    клиентская точка входа
-    client/ping/                пинги: хранение, отправка, голограмма в мире
     client/ClientEvents.java    ввод, тики, жизненный цикл сессии
+    client/ping/                пинги: хранение, отправка, голограмма в мире
     client/input/               кейбинды
     client/map/                 сэмплер чанков, мешер, кэш рельефа
     client/render/              камера, off-screen карта, маркеры, HUD
     client/sound/               звуки интерфейса с кулдауном
     client/waypoint/            метки, фильтр, хранилище, детектор смерти
     client/ui/                  тема, виджеты, экраны
-src/smoke/java/                 автоматическая приёмка (не входит в jar)
-tools/generate_sounds.py        генератор звуков
-tools/generate_logo.py          генератор логотипа
-publish/                        материалы для Modrinth и CurseForge
+common/src/smoke/java/          автоматическая приёмка, общая для загрузчиков (не входит в jar)
+neoforge/src/main/              точки входа и события NeoForge, neoforge.mods.toml
+fabric/src/main/                точки входа, события Fabric API, миксины, fabric.mod.json
+tools/                          генераторы звуков, логотипа и баннера
+publish/                        материалы для Modrinth, CurseForge и GitHub
 ```
 
 ## Звуки

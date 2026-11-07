@@ -1,8 +1,8 @@
 # IsoMap
 
-**A minimalist 2.5D minimap for NeoForge.** Your world as a small isometric model in the corner of the screen: real relief, a free camera, and waypoints that keep their height.
+**A minimalist 2.5D minimap for NeoForge and Fabric.** Your world as a small isometric model in the corner of the screen: real relief, a free camera, and waypoints that keep their height.
 
-Install it on the client and it works on any server. The server only needs the mod if you want pings to travel between players invisibly, without chat.
+Install it on the client and it works on any server. On Fabric it needs Fabric API. The server only needs the mod if you want pings to travel between players invisibly, without chat.
 
 ## Features
 

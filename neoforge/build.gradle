@@ -1,0 +1,102 @@
+plugins {
+    id 'net.neoforged.moddev'
+}
+
+base {
+    archivesName = "${mod_id}-neoforge-${minecraft_version}"
+}
+
+def common = project(':common')
+
+// The shared code is compiled into this jar together with the NeoForge glue.
+// smoke: the QA harness that plays the mod inside a real client. It is never packaged into the release jar.
+sourceSets {
+    main {
+        java.srcDir common.file('src/main/java')
+        resources.srcDir common.file('src/main/resources')
+    }
+    smoke {
+        java.srcDir common.file('src/smoke/java')
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+    // Empty on purpose: a run built on it has NeoForge and nothing of IsoMap on its classpath.
+    plain {}
+}
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    addModdingDependenciesTo(sourceSets.smoke)
+    addModdingDependenciesTo(sourceSets.plain)
+
+    runs {
+        client {
+            client()
+        }
+        // Loads the mod on the dedicated-server side: proves that the common part does not touch client-only classes.
+        serverLoadCheck {
+            type = 'gameTestServer'
+            gameDirectory = rootProject.file('run-gametest')
+        }
+        // Launches a real client, walks through the mod's features and exits. Report: run-smoke/isomap-smoke/report.txt
+        smokeTest {
+            client()
+            sourceSet = sourceSets.smoke
+            gameDirectory = rootProject.file(System.getenv('ISOMAP_SMOKE_DIR') ?: 'run-smoke')
+            programArguments.addAll '--username', System.getenv('ISOMAP_SMOKE_USER') ?: 'Dev'
+            systemProperty 'isomap.smoke', 'true'
+            programArguments.addAll '--width', System.getenv('ISOMAP_SMOKE_WIDTH') ?: '1280', '--height', System.getenv('ISOMAP_SMOKE_HEIGHT') ?: '720'
+        }
+        // A real dedicated server for the multiplayer check. Its folder holds the EULA the author accepted for this test.
+        dedicatedServer {
+            server()
+            gameDirectory = rootProject.file('run-server')
+            programArguments.add '--nogui'
+        }
+        // NeoForge without IsoMap, joining the test server straight away: the player the optional channel is for.
+        plainClient {
+            client()
+            gameDirectory = rootProject.file('run-plain')
+            sourceSet = sourceSets.plain
+            loadedMods = []
+            programArguments.addAll '--username', 'Plain', '--quickPlayMultiplayer', 'localhost:25599', '--width', '854', '--height', '480'
+        }
+        configureEach {
+            logLevel = org.slf4j.event.Level.INFO
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+            sourceSet(sourceSets.smoke)
+        }
+    }
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
