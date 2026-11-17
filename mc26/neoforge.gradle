@@ -1,0 +1,81 @@
+apply from: rootProject.file('mc26/lines.gradle')
+
+base {
+    archivesName = "${mod_id}-neoforge-${v.minecraft_version}"
+}
+
+def roots = layers('common', 'neoforge')
+def runRoot = "run26-${mcLine}"
+
+sourceSets {
+    main {
+        java.srcDirs = dirsOf(roots, 'main/java')
+        resources.srcDirs = dirsOf(roots, 'main/resources')
+    }
+    smoke {
+        java.srcDirs = dirsOf(roots, 'smoke/java')
+        resources.srcDirs = []
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+neoForge {
+    version = v.neo_version
+    addModdingDependenciesTo(sourceSets.smoke)
+
+    runs {
+        client {
+            client()
+            gameDirectory = rootProject.file("${runRoot}/neoforge")
+        }
+        serverLoadCheck {
+            type = 'gameTestServer'
+            gameDirectory = rootProject.file("${runRoot}/neoforge-gametest")
+        }
+        smokeTest {
+            client()
+            sourceSet = sourceSets.smoke
+            gameDirectory = rootProject.file(System.getenv('ISOMAP_SMOKE_DIR') ?: "${runRoot}/neoforge-smoke")
+            programArguments.addAll '--username', System.getenv('ISOMAP_SMOKE_USER') ?: 'Dev'
+            systemProperty 'isomap.smoke', 'true'
+            programArguments.addAll '--width', System.getenv('ISOMAP_SMOKE_WIDTH') ?: '1280', '--height', System.getenv('ISOMAP_SMOKE_HEIGHT') ?: '720'
+        }
+        dedicatedServer {
+            server()
+            gameDirectory = rootProject.file("${runRoot}/neoforge-server")
+            programArguments.add '--nogui'
+        }
+        configureEach {
+            logLevel = org.slf4j.event.Level.INFO
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+            sourceSet(sourceSets.smoke)
+        }
+    }
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : v.minecraft_version,
+            minecraft_version_range: v.minecraft_version_range,
+            neo_version            : v.neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from dirsOf(roots, 'main/templates')
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata

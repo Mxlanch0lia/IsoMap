@@ -3,7 +3,7 @@
 <h1 align="center">IsoMap</h1>
 
 <p align="center">
-A minimalist 2.5D isometric minimap for <b>Minecraft 1.21.1</b>, on <b>NeoForge</b> and <b>Fabric</b>.<br>
+A minimalist 2.5D isometric minimap for <b>Minecraft 1.21.1, 26.1.2 and 26.3</b>, on <b>NeoForge</b> and <b>Fabric</b>.<br>
 <a href="https://modrinth.com/mod/isomap-minimap"><img src="https://img.shields.io/modrinth/dt/isomap-minimap?logo=modrinth&label=Modrinth" alt="Modrinth downloads"></a>
 <a href="https://www.curseforge.com/minecraft/mc-mods/isomap"><img src="https://img.shields.io/curseforge/dt/1779166?logo=curseforge&label=CurseForge" alt="CurseForge downloads"></a>
 <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license">
@@ -24,7 +24,8 @@ Your world as a small isometric model in the corner of the screen: real relief, 
 - **Waypoints** with tags, search (`#tag`), colours, their real height, and teleport with cheats or operator rights. Saved per world and server.
 - **Death markers**, created automatically.
 - **Pings:** press `G` to put a temporary hologram on whatever you are looking at, visible to other players through walls and on their map.
-- **Everything in game:** a settings screen with five tabs and a live preview, soft interface sounds, English and Russian.
+- **Everything in game:** a settings screen with five tabs and a live preview, soft interface sounds.
+- **Eight languages:** English, Russian, German, French, Spanish, Portuguese (Brazil), Ukrainian and Simplified Chinese.
 
 | Full map | Cave view | Waypoints |
 | --- | --- | --- |
@@ -32,8 +33,8 @@ Your world as a small isometric model in the corner of the screen: real relief, 
 
 ## Installation
 
-1. Install NeoForge 21.1.x, or Fabric Loader with [Fabric API](https://modrinth.com/mod/fabric-api), for Minecraft 1.21.1.
-2. Download the IsoMap jar for your loader from [Modrinth](https://modrinth.com/mod/isomap-minimap), [CurseForge](https://www.curseforge.com/minecraft/mc-mods/isomap) or [Releases](../../releases) and put it into `mods`.
+1. Install NeoForge, or Fabric Loader with [Fabric API](https://modrinth.com/mod/fabric-api), for Minecraft 1.21.1, 26.1.2 or 26.3.
+2. Download the IsoMap jar for your loader and Minecraft version from [Modrinth](https://modrinth.com/mod/isomap-minimap), [CurseForge](https://www.curseforge.com/minecraft/mc-mods/isomap) or [Releases](../../releases) and put it into `mods`.
 3. Optional: put the same jar on the server so pings travel invisibly. Players without the mod can still join.
 
 On Fabric the settings are also reachable from [Mod Menu](https://modrinth.com/mod/modmenu), if you have it.
@@ -56,15 +57,17 @@ On the full map: left drag turns, right drag moves, the wheel zooms, a double cl
 
 ## Building
 
-JDK 21 is needed; Gradle comes with the wrapper.
+JDK 25 runs the build and JDK 21 compiles the 1.21.1 jars (Gradle finds or downloads both); Gradle itself comes with the wrapper.
 
 ```bash
 ./gradlew build
 ```
 
-The project has three parts: `common` holds the map itself and is compiled against plain Minecraft, so it cannot use either loader by accident; `neoforge` and `fabric` add the thin glue for each loader and compile `common` into their jars. The jars appear in `neoforge/build/libs/` and `fabric/build/libs/`.
+The project has two trees. For Minecraft 1.21.1: `common` holds the map itself and is compiled against plain Minecraft, so it cannot use either loader by accident; `neoforge` and `fabric` add the thin glue for each loader and compile `common` into their jars. For Minecraft 26.1.2 and 26.3: `mc26/src` holds the same parts once, and the few files that differ between those two versions live in folders ending in `-26.1` or `-26.3`; the Gradle projects are named `common-26.1`, `neoforge-26.1`, `fabric-26.3` and so on.
 
-`./gradlew :neoforge:runClient` or `:fabric:runClient` starts the game with the mod. `./gradlew :neoforge:runSmokeTest` and `:fabric:runSmokeTest` play through the mod in a real client and write a report to `run-smoke/` and `run-smoke-fabric/`. The technical notes (rendering, assumptions, what is and is not tested) are in the [Russian README](README.ru.md).
+The jars appear in `neoforge/build/libs/`, `fabric/build/libs/` and `mc26/<version>/<loader>/build/libs/`.
+
+`./gradlew :neoforge:runClient`, `:fabric:runClient` or, for example, `:neoforge-26.3:runClient` starts the game with the mod. `runSmokeTest` in any of those projects plays through the mod in a real client and writes a report to its run folder (`run-smoke/`, `run-smoke-fabric/`, `run26-<version>/<loader>-smoke/`). The technical notes (rendering, assumptions, what is and is not tested) are in the [Russian README](README.ru.md).
 
 ## Bug reports and contact
 

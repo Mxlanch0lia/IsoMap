@@ -1,0 +1,18 @@
+// Shared by every 26.x project: reads the version's properties and lists the source folders.
+// Each project's own build.gradle sets ext.mcLine ('26.1' or '26.3') before applying a script from here.
+def props = new Properties()
+rootProject.file("mc26/${mcLine}.properties").withInputStream { props.load(it) }
+ext.v = props
+
+// A source set is put together from layers: the shared folder first, then the version's own folder.
+// A file that differs between versions lives only in the version folders, never in the shared one.
+ext.layers = { String... kinds ->
+    kinds.collectMany { kind -> [rootProject.file("mc26/src/${kind}"), rootProject.file("mc26/src/${kind}-${mcLine}")] }
+}
+ext.dirsOf = { List<File> roots, String sub -> roots.collect { new File(it, sub) } }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xmaxerrs', '2000']
+}

@@ -9,8 +9,8 @@ pluginManagement {
     plugins {
         id 'net.neoforged.moddev' version '2.0.148'
         // The variant of Loom for Minecraft versions that still ship obfuscated, 1.21.1 among them.
-        // 1.15 is the newest that runs on the project's Gradle 9.2; later ones need Gradle 9.4 and up.
-        id 'net.fabricmc.fabric-loom-remap' version '1.15.5'
+        id 'net.fabricmc.fabric-loom-remap' version '1.19.4'
+        id 'net.fabricmc.fabric-loom' version '1.19.4'
     }
 }
 
@@ -22,3 +22,11 @@ rootProject.name = 'isomap'
 
 // common: the map itself, against plain Minecraft. neoforge and fabric: thin glue that compiles common in with it.
 include 'common', 'neoforge', 'fabric'
+
+// Minecraft 26.1.2 and 26.3: the same layout, built from mc26/src (see mc26/lines.gradle).
+['26.1', '26.3'].each { line ->
+    ['common', 'neoforge', 'fabric'].each { kind ->
+        include "${kind}-${line}"
+        project(":${kind}-${line}").projectDir = file("mc26/${line}/${kind}")
+    }
+}

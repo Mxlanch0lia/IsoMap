@@ -12,7 +12,10 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          # 25 runs the build (the Minecraft 26 toolchain needs it); 21 compiles the 1.21.1 jars.
+          java-version: |
+            21
+            25
       - uses: gradle/actions/setup-gradle@v4
       # The repository is made on Windows, where the executable bit does not exist.
       - run: chmod +x gradlew
@@ -20,7 +23,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: isomap-jars
-          # One jar per loader; the common project builds no release jar.
+          # One jar per loader and Minecraft version; the common projects build no release jar.
           path: |
             neoforge/build/libs/*.jar
             fabric/build/libs/*.jar
+            mc26/*/neoforge/build/libs/*.jar
+            mc26/*/fabric/build/libs/*.jar

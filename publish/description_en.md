@@ -1,74 +1,71 @@
 # IsoMap
 
-**A minimalist 2.5D minimap for NeoForge and Fabric.** Your world as a small isometric model in the corner of the screen: real relief, a free camera, and waypoints that keep their height.
+**A tiny 3D model of your world, right in the corner of your screen.**
 
-Install it on the client and it works on any server. On Fabric it needs Fabric API. The server only needs the mod if you want pings to travel between players invisibly, without chat.
+Most minimaps show the world as a flat picture. IsoMap shows it the way you actually see it: hills rise, rivers cut through valleys, trees stand on real trunks, and a bridge over a ravine stays a bridge. Grab the camera, turn it, tilt it, and find your way home at a glance.
 
-## Features
+Works on NeoForge and Fabric, for Minecraft 1.21.1, 26.1.2 and 26.3. Put it on your client and play on any server you like.
 
-### 2.5D map
-- Isometric terrain with readable relief, biome colours and water depth
-- Free camera: turn and tilt with the mouse, from a low angle to straight down
-- Zoom, smooth following, north at the top by default
-- Real shapes: tree crowns on trunks with shade below, floating blocks, bridges and overhangs instead of pillars down to the ground
-- 3D can be turned off for a flat top-down map
-- A full-screen map with panning that remembers explored chunks between sessions: click a waypoint to open it, double-click to create one
+## What it does
 
-### Cave view
-Underground, the map switches to a section of the caves at your height: dark rock, outlined passages, floors that fade with depth and warm up around torches and lava. It also works in the Nether.
+### A map with real relief
+You can tell a mountain from a plain without reading any numbers. Biome colours, water that darkens with depth, tree crowns casting shade on the ground below. If you prefer the classic look, switch 3D off and get a clean top-down map.
 
-### Waypoints
-- Name, position, dimension, colour and visibility
-- Shown at their real height, with a thin pin down to the ground
-- Tags, with filtering and search (`#tag`)
-- Teleport to a waypoint if you have cheats or operator rights
-- Saved per world and per server
+### A camera you control
+Hold `Left Alt` and move the mouse to turn and tilt the map, from a low angle to straight down. Press `Y` to snap to a top-down view. North stays at the top until you decide otherwise.
 
-### Death markers
-A marker with coordinates and dimension is created automatically when you die. You can turn this off and limit how many are kept.
+### A big map that remembers
+Press `M` for a full-screen map of everything you have explored, even from earlier sessions. Drag to look around, double-click to drop a waypoint, right-click for a quick menu.
 
-### Pings
-Press `G` and whatever you are looking at gets a temporary hologram for other players: a beam, a floating diamond with your name and the distance, and a ripple on the ground. It shows through walls and on the map, follows a mob or player it was placed on, and disappears by itself after 20 seconds.
-- On a server with the mod, and in a LAN world, pings travel invisibly, within the dimension and team
-- On a server without the mod you can turn on sending through chat: players with the mod see a ping instead of the message, everyone else sees a line with coordinates
-- Otherwise, on a server without the mod, only you see your ping
+### Caves that make sense
+Go underground and the map switches to a slice of the caves at your height: dark rock, outlined tunnels, floors that warm up near torches and lava. It works in the Nether too.
 
-### Clean interface
-- Plain rectangles, thin borders, light transparency
-- Controls grow slightly on hover and flash on press
-- Everything scales with GUI scale
-- Soft synthesised interface sounds with volume and per-group switches
+### Waypoints that keep their height
+A waypoint set on a mountain top stays on the mountain top, with a thin pin down to the ground so you can see how high it is. Give waypoints colours and tags, search with `#tag`, and teleport to them if you have cheats on.
 
-### Everything in game
-A settings screen with five tabs: General, Minimap, Waypoints, Sounds, Controls. Changes apply immediately, and the minimap stays visible behind the panel as a live preview.
+### You will find where you died
+When you die, a death marker appears automatically with the coordinates and dimension. You can turn it off or limit how many are kept.
+
+### Pings for your friends
+Press `G` to put a glowing hologram on whatever you are looking at. Your friends see it through walls and on their map, it follows a mob or player it was placed on, and it fades away by itself after 20 seconds.
+
+On a server with IsoMap (or in a LAN world) pings travel quietly behind the scenes. On a server without it you can let pings go through chat: players with the mod see a hologram, everyone else just sees a line with coordinates.
+
+### Calm, simple interface
+Thin borders, light transparency, soft sounds, and buttons that react a little when you hover over them. Everything is set up in game, and the minimap stays visible behind the settings so you see every change right away.
 
 ## Default keys
 
-| Key | Action |
+| Key | What it does |
 | --- | --- |
-| `M` | Open the full map |
+| `M` | Full map |
 | `K` | Settings |
 | `J` | Waypoint list |
 | `B` | New waypoint here |
 | `G` | Ping what you are looking at (middle mouse button on the full map) |
 | `N` | Show or hide the minimap |
 | `=` / `-` | Zoom |
-| Hold `Left Alt` | The mouse turns the map camera; the wheel zooms |
+| Hold `Left Alt` | Turn the map camera with the mouse, zoom with the wheel |
 | `Y` | Top-down view |
 
-All keys can be changed in the settings.
+You can change any of them in the settings.
+
+## Installation
+- **NeoForge:** just drop the jar into `mods`.
+- **Fabric:** you also need [Fabric API](https://modrinth.com/mod/fabric-api). [Mod Menu](https://modrinth.com/mod/modmenu) is optional and adds a settings button to the mod list.
+- **Server:** not required. Install it there only if you want pings to travel without chat. Players without the mod can still join.
 
 ## Good to know
-- The map only knows chunks your client has received. The surface you have seen is saved; caves and the Nether are not.
-- Block changes appear on the map within a few seconds.
-- Colours come from the vanilla map palette and biome tints, so modded blocks use the map colour their authors chose.
+- The map shows only what your game has loaded. The surface you have seen is remembered; caves and the Nether are not.
+- Changes to blocks show up on the map within a few seconds.
+- Colours come from the vanilla map palette, so blocks from other mods get whatever map colour their authors gave them.
 - Other players and mobs are not shown on the map.
 
-## Bug reports and contact
-Found a bug, or something does not work with another mod? Write to **mxlanch0lia@gmail.com**. Please add the Minecraft and IsoMap versions, your other mods and, if the game crashed, the crash report or `logs/latest.log`.
-
 ## Languages
-English and Russian.
+English, Russian, German, French, Spanish, Portuguese (Brazil), Ukrainian and Simplified Chinese. If you spot an awkward translation, let me know.
+
+## Found a bug?
+Write to **mxlanch0lia@gmail.com**. It helps a lot if you include the Minecraft and IsoMap versions, your other mods and, if the game crashed, the crash report or `logs/latest.log`.
 
 ## License
-MIT. The sounds and the logo are original and were made for this mod.
+MIT. The logo and the sounds were made specifically for this mod.

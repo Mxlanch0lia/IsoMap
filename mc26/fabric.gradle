@@ -1,0 +1,79 @@
+apply from: rootProject.file('mc26/lines.gradle')
+
+base {
+    archivesName = "${mod_id}-fabric-${v.minecraft_version}"
+}
+
+def roots = layers('common', 'fabric')
+def runRoot = "run26-${mcLine}"
+
+sourceSets {
+    main {
+        java.srcDirs = dirsOf(roots, 'main/java')
+        resources.srcDirs = dirsOf(roots, 'main/resources')
+    }
+    smoke {
+        java.srcDirs = dirsOf(roots, 'smoke/java')
+        resources.srcDirs = dirsOf(roots, 'smoke/resources')
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
+repositories {
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/releases/'
+    }
+}
+
+// Minecraft 26 ships with its real names, so there are no mappings and no remapping.
+dependencies {
+    minecraft "com.mojang:minecraft:${v.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${v.fabric_api_version}"
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    smokeCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly "com.terraformersmc:modmenu:${v.modmenu_version}"
+}
+
+loom {
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+        isomap_smoke {
+            sourceSet sourceSets.smoke
+        }
+    }
+
+    runs {
+        client {
+            runDir "../../../${runRoot}/fabric"
+        }
+        server {
+            runDir "../../../${runRoot}/fabric-server"
+        }
+        smokeTest {
+            client()
+            name 'Smoke test'
+            source sourceSets.smoke
+            runDir '../../../' + (System.getenv('ISOMAP_SMOKE_DIR') ?: "${runRoot}/fabric-smoke")
+            vmArg '-Disomap.smoke=true'
+            programArgs '--username', System.getenv('ISOMAP_SMOKE_USER') ?: 'Dev', '--width', System.getenv('ISOMAP_SMOKE_WIDTH') ?: '1280', '--height', System.getenv('ISOMAP_SMOKE_HEIGHT') ?: '720'
+        }
+    }
+}
+
+processResources {
+    def props = [
+            version          : mod_version,
+            mod_description  : mod_description,
+            minecraft_version: v.minecraft_version,
+            fabric_loader_min: v.fabric_loader_min,
+    ]
+    inputs.properties props
+    filesMatching('fabric.mod.json') {
+        expand props
+    }
+}

@@ -254,9 +254,9 @@ public class WaypointListScreen extends IsoScreen {
             this.waypoint = waypoint;
             this.growFactor = 0.006f;
             this.visibility = new VisibilityButton(waypoint);
-            this.edit = new IsoButton(0, 0, ROW_BUTTON + 10, ROW_BUTTON, Component.translatable("isomap.waypoints.edit"), b -> openEditor());
+            this.edit = new IsoButton(0, 0, rowButtonWidth("isomap.waypoints.edit"), ROW_BUTTON, Component.translatable("isomap.waypoints.edit"), b -> openEditor());
             this.teleport = WaypointTeleport.isAllowed(minecraft)
-                    ? new IsoButton(0, 0, ROW_BUTTON + 10, ROW_BUTTON, Component.translatable("isomap.waypoints.teleport"), b -> {
+                    ? new IsoButton(0, 0, rowButtonWidth("isomap.waypoints.teleport"), ROW_BUTTON, Component.translatable("isomap.waypoints.teleport"), b -> {
                         WaypointTeleport.teleport(minecraft, waypoint);
                         minecraft.tell(() -> minecraft.setScreen(null));
                     })
@@ -366,5 +366,10 @@ public class WaypointListScreen extends IsoScreen {
                 g.renderOutline(x, y, 6, 6, Theme.TEXT_DIM);
             }
         }
+    }
+
+    /** Wide enough for its label in any language, never narrower than the English layout. */
+    private static int rowButtonWidth(String key) {
+        return Math.max(ROW_BUTTON + 10, net.minecraft.client.Minecraft.getInstance().font.width(Component.translatable(key)) + 8);
     }
 }

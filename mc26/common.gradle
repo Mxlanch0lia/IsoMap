@@ -1,0 +1,26 @@
+apply from: rootProject.file('mc26/lines.gradle')
+
+base {
+    archivesName = "${mod_id}-common-${v.minecraft_version}"
+}
+
+def roots = layers('common')
+
+sourceSets {
+    main {
+        java.srcDirs = dirsOf(roots, 'main/java')
+        resources.srcDirs = dirsOf(roots, 'main/resources')
+    }
+    smoke {
+        java.srcDirs = dirsOf(roots, 'smoke/java')
+        resources.srcDirs = []
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+neoForge {
+    // Plain Minecraft, no loader: anything loader-specific in the shared code fails to compile here.
+    neoFormVersion = v.neo_form_version
+    addModdingDependenciesTo(sourceSets.smoke)
+}

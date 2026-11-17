@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "isomap_smoke",
+  "version": "1.0.0",
+  "name": "IsoMap QA harness",
+  "description": "Plays IsoMap in a development client. Never part of a release.",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.isomap.smoke.fabric.SmokeFabric"]
+  },
+  "depends": {
+    "isomap": "*"
+  }
+}
